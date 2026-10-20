@@ -1,13 +1,12 @@
-import { signalStore, withComputed, withProps } from '@ngrx/signals';
-import { Events, on, withEventHandlers, withReducer } from '@ngrx/signals/events';
-import { httpErrorEvents, MalFormedDataPayload } from './events';
-import { withEntities, addEntities, addEntity, removeEntity } from '@ngrx/signals/entities';
 import { computed, inject } from '@angular/core';
-import { map, mergeMap, tap } from 'rxjs';
-import { LoggingApi } from './logging-api';
 import { withStellarDevtools } from '@hypertheory-labs/stellar-ng-devtools';
 import { tapResponse } from '@ngrx/operators';
-import { CounterStore } from '../../signals/stores/counter';
+import { signalStore, withComputed } from '@ngrx/signals';
+import { addEntity, removeEntity, withEntities } from '@ngrx/signals/entities';
+import { Events, on, withEventHandlers, withReducer } from '@ngrx/signals/events';
+import { mergeMap } from 'rxjs';
+import { httpErrorEvents, MalFormedDataPayload } from './events';
+import { LoggingApi } from './logging-api';
 type MalformedDataEntity = MalFormedDataPayload & { id: string };
 export const ErrorStore = signalStore(
   withStellarDevtools('ErrorStore', {
