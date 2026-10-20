@@ -95,6 +95,7 @@ export class Index {
           message: 'Cannot get the product list',
           zodError: parseResults.error,
           featureName: 'products',
+          url: '/api/products',
         });
         // dispatch an action
         throw new Error('Malformed Data');

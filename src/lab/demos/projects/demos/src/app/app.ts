@@ -21,10 +21,18 @@ import { StellarOverlayComponent } from '@hypertheory-labs/stellar-ng-devtools';
 
         <div class="w-full h-12 bg-base-200 p-2">{{ r.getTitle() }}</div>
         <main class="p-2">
-          @for (err of errorStore.entities(); track err.id) {
+          @for (err of errorStore.combined(); track err.id) {
             <div class="toast toast-top">
               <div class="alert alert-info">
-                <span>{{ err.message }}</span>
+                @switch (err.kind) {
+                  @case ('malformed') {
+                    <span>Malformed Response from Server{{ err.message }} at {{ err.url }}</span>
+                  }
+                  @case ('http') {
+                    <span>Bad Reuest: {{ err.message }} at {{ err.url }}</span>
+                  }
+                }
+
                 <button (click)="events.errorDismissed(err.id)" class="btn btn-sm">Ok</button>
               </div>
             </div>
