@@ -1,9 +1,10 @@
 import { CurrencyPipe, JsonPipe } from '@angular/common';
-import { Component, computed, input, Resource, signal } from '@angular/core';
+import { httpResource } from '@angular/common/http';
+import { Component, computed, effect, input, signal } from '@angular/core';
 import { RouterLinkWithHref, RouterOutlet } from '@angular/router';
-import { Product } from '../../../../mocks/data/products';
-import { httpResource, HttpResourceRef } from '@angular/common/http';
-import { ProductModel } from '../types';
+import { ProductModel, productSummaryItemListSchema } from '../types';
+import { injectDispatch } from '@ngrx/signals/events';
+import { httpErrorEvents } from '../../shared/error-handling/events';
 
 @Component({
   selector: 'app-products-index',
@@ -11,25 +12,18 @@ import { ProductModel } from '../types';
   template: `
     <p>Products Index Page</p>
     <div class="join">
-      <button
-        (click)="sortKey.set('name')"
-        [aria-disabled]="sortKey() === 'name'"
-        class="join-item btn"
-      >
-        Sort by Name
-      </button>
-      <button
-        (click)="sortKey.set('price')"
-        [aria-disabled]="sortKey() === 'price'"
-        class="join-item btn"
-      >
-        Sort by Price
-      </button>
+      @if (sortKey() === 'price') {
+        <a [routerLink]="['.', { sortKey: 'name' }]" class="join-item btn"> Sort by Name </a>
+      } @else {
+        <a [routerLink]="['.', { sortKey: 'price' }]" class="join-item btn"> Sort by Price </a>
+      }
     </div>
-    @if (productsResource.isLoading()) {
-      <p>Getting your products...</p>
-      <span class="loading loading-lg loading-ball"></span>
-    }
+    <div class="flex h-12">
+      @if (productsResource.isLoading()) {
+        <p>Getting your products...</p>
+        <span class="loading loading-lg loading-ball"></span>
+      }
+    </div>
     @if (productsResource.hasValue()) {
       <div class="flex flex-row gap-4">
         <div class="overflow-x-auto">
@@ -71,19 +65,44 @@ import { ProductModel } from '../types';
 
     @if (productsResource.error()) {
       <p>Blammo</p>
+      <pre> {{ productsResource.error() | json }} </pre>
     }
-    <pre>
-    If you are blocking, you just get the list,
-    if you are non-blocking, you get a HttpResourceRef that you can interact with.
-    
-    {{ list() | json }}</pre>
   `,
   styles: ``,
 })
 export class Index {
-  private readonly productsResource = httpResource<ProductModel[]>(() => '/api/products');
-  list = input<HttpResourceRef<ProductModel[]>>();
-  private readonly sortKey = signal<'price' | 'name'>('name');
+  private readonly httpEvents = injectDispatch(httpErrorEvents);
+  private name: string = 'joe';
+
+  constructor() {
+    effect((cleanupFn) => {
+      const sortingBy = this.sortKey();
+      console.log('Changed sorting to...' + sortingBy);
+      const timerId = setInterval(() => {
+        //this.productsResource.reload();
+      }, 3000);
+      cleanupFn(() => clearInterval(timerId));
+    });
+  }
+
+  private readonly productsResource = httpResource<ProductModel[]>(() => '/api/products', {
+    parse: (val) => {
+      const parseResults = productSummaryItemListSchema.safeParse(val);
+      if (parseResults.success) {
+        return parseResults.data;
+      } else {
+        this.httpEvents.malformedData({
+          message: 'Cannot get the product list',
+          zodError: parseResults.error,
+          featureName: 'products',
+        });
+        // dispatch an action
+        throw new Error('Malformed Data');
+      }
+    },
+  });
+  // list = input<HttpResourceRef<ProductModel[]>>();
+  sortKey = input<'price' | 'name'>('name');
   sortedProducts = computed(() => {
     const list = this.productsResource.value() ?? [];
     // return list.toSorted((a, b) => (a.price === b.price ? 0 : a.price > b.price ? -1 : 1));

@@ -1,5 +1,5 @@
 import { Component, input, Resource } from '@angular/core';
-import { ProductModel } from '../types';
+import { ProductDetailsModel, ProductModel } from '../types';
 import { HttpResourceRef } from '@angular/common/http';
 import { CurrencyPipe } from '@angular/common';
 
@@ -25,5 +25,5 @@ import { CurrencyPipe } from '@angular/common';
   styles: ``,
 })
 export class Details {
-  product = input.required<HttpResourceRef<ProductModel & { description: string }>>();
+  product = input.required<HttpResourceRef<ProductDetailsModel>>();
 }

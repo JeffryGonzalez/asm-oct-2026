@@ -18,8 +18,8 @@ export const productsRoutes: Routes = [
       {
         path: '', // shows the list
         component: Index,
-        resources: (ctx) => {
-          return { list: httpResource<ProductModel[]>(() => '/api/products') };
+        resources: () => {
+          return { list: nonBlocking(httpResource<ProductModel[]>(() => '/api/products')) };
         },
         children: [
           {
