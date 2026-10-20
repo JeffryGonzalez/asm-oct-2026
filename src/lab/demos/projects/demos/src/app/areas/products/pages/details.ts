@@ -1,13 +1,17 @@
 import { Component, input, Resource } from '@angular/core';
 import { ProductModel } from '../types';
+import { HttpResourceRef } from '@angular/common/http';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-products-details',
-  imports: [],
+  imports: [CurrencyPipe],
   template: `
     <div class="bg-base-100 rounded-md p-4 m-4">
       @if (product().hasValue()) {
-        <p>{{ product().value().name }}</p>
+        <p class="text-lg font-bold">{{ product().value().name }}</p>
+        <p>Price: {{ product().value().price | currency }}</p>
+        <p>Description: {{ product().value().description }}</p>
       }
       @if (product().isLoading()) {
         <div class="flex w-64 flex-col gap-4">
@@ -21,5 +25,5 @@ import { ProductModel } from '../types';
   styles: ``,
 })
 export class Details {
-  product = input.required<Resource<ProductModel>>();
+  product = input.required<HttpResourceRef<ProductModel & { description: string }>>();
 }

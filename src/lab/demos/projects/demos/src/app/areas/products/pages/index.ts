@@ -1,13 +1,13 @@
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, JsonPipe } from '@angular/common';
 import { Component, computed, input, Resource, signal } from '@angular/core';
 import { RouterLinkWithHref, RouterOutlet } from '@angular/router';
 import { Product } from '../../../../mocks/data/products';
-import { httpResource } from '@angular/common/http';
+import { httpResource, HttpResourceRef } from '@angular/common/http';
 import { ProductModel } from '../types';
 
 @Component({
   selector: 'app-products-index',
-  imports: [CurrencyPipe, RouterOutlet, RouterLinkWithHref],
+  imports: [CurrencyPipe, RouterOutlet, RouterLinkWithHref, JsonPipe],
   template: `
     <p>Products Index Page</p>
     <div class="join">
@@ -72,12 +72,17 @@ import { ProductModel } from '../types';
     @if (productsResource.error()) {
       <p>Blammo</p>
     }
+    <pre>
+    If you are blocking, you just get the list,
+    if you are non-blocking, you get a HttpResourceRef that you can interact with.
+    
+    {{ list() | json }}</pre>
   `,
   styles: ``,
 })
 export class Index {
   private readonly productsResource = httpResource<ProductModel[]>(() => '/api/products');
-
+  list = input<HttpResourceRef<ProductModel[]>>();
   private readonly sortKey = signal<'price' | 'name'>('name');
   sortedProducts = computed(() => {
     const list = this.productsResource.value() ?? [];
