@@ -22,7 +22,7 @@ import { SomeSharedService } from '../../shared/some-service';
     </app-shared-collapse>
     <div class="m-4">
       <button (click)="store.decrement()" class="btn btn-sm btn-circle btn-error">-</button
-      ><span class="font-mono text-2xl p-4 font-black">{{ store.current() }}</span>
+      ><span class="font-mono text-3xl p-4 font-black">{{ store.current() }}</span>
 
       <button (click)="store.increment()" class="btn btn-sm btn-circle btn-success">+</button>
     </div>
