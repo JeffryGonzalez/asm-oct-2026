@@ -54,7 +54,7 @@ export const ErrorStore = signalStore(
         id: m.id,
         kind: 'malformed',
         message:
-          'malformed response!  ' + m.message + m.featureName ? ' (' + m.featureName + ')' : '',
+          'Malformed Response  ' + m.message + m.featureName ? ' (' + m.featureName + ')' : '',
         url: m.url,
       }));
       const http = state
