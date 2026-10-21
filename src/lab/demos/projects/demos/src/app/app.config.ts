@@ -12,11 +12,12 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { httpErrorInterceptor } from './areas/shared/error-handling/http-error-interceptor';
 import { LoggingApi } from './areas/shared/error-handling/logging-api';
 import { provideStellar } from '@hypertheory-labs/stellar-ng-devtools';
+import { cacheInterceptor } from './areas/shared/cache-interceptor';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideStellar(),
     LoggingApi,
-    provideHttpClient(withInterceptors([httpErrorInterceptor])),
+    provideHttpClient(withInterceptors([httpErrorInterceptor, cacheInterceptor])),
     ErrorStore,
     SomeSharedService,
     provideBrowserGlobalErrorListeners(),
