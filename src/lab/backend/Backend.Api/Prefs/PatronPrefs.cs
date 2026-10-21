@@ -2,6 +2,7 @@ using Fisher;
 using Microsoft.AspNetCore.Mvc;
 using JasperFx;
 using Wolverine.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace Backend.Api.Prefs;
 
@@ -81,3 +82,14 @@ public static class PrefsEndpoints
             statusCode: StatusCodes.Status412PreconditionFailed);
     }
 }
+/*type ContactItem = { kind: string; value: string };
+type LibraryCardRequest = {
+  name: {
+    first: string;
+    last: string;
+  };
+  primaryEmail: string;
+  contactMechanisms: ContactItem[];
+};
+*/
+
