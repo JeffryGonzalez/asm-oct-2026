@@ -4,6 +4,7 @@ import {
   withAutoCleanupInjectors,
   withComponentInputBinding,
   withRouterResources,
+  withViewTransitions,
 } from '@angular/router';
 import { routes } from './app.routes';
 import { SomeSharedService } from './areas/shared/some-service';
@@ -17,7 +18,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideStellar(),
     LoggingApi,
-    provideHttpClient(withInterceptors([httpErrorInterceptor, cacheInterceptor])),
+    provideHttpClient(withInterceptors([httpErrorInterceptor /*cacheInterceptor */])),
     ErrorStore,
     SomeSharedService,
     provideBrowserGlobalErrorListeners(),
@@ -25,6 +26,7 @@ export const appConfig: ApplicationConfig = {
     // it is opt-in because you should be sure that's what you want
     provideRouter(
       routes,
+      withViewTransitions(),
       withComponentInputBinding(),
       withAutoCleanupInjectors(),
       withRouterResources(),

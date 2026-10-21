@@ -1,7 +1,7 @@
 import { CurrencyPipe, TitleCasePipe } from '@angular/common';
 import type { SortOption } from '../stores/products';
 import { Component, effect, inject, input } from '@angular/core';
-import { RouterLinkWithHref, RouterOutlet } from '@angular/router';
+import { Router, RouterLinkWithHref, RouterOutlet } from '@angular/router';
 import { ProductsStore } from '../stores/products';
 
 @Component({
@@ -75,13 +75,19 @@ import { ProductsStore } from '../stores/products';
   styles: ``,
 })
 export class Index {
+  private readonly router = inject(Router);
+
   private readonly store = inject(ProductsStore);
+  // this is coming from the router - it's reading that matrix parameter
   sortOption = input<SortOption>('name');
 
   constructor() {
     // Note: The (other) use of an effect I promised. Syncing inputs with the store.
     effect(() => {
-      this.store.setSortOption(this.sortOption());
+      const opt = this.sortOption();
+      if (opt) {
+        this.store.setSortOption(this.sortOption());
+      }
     });
   }
 }

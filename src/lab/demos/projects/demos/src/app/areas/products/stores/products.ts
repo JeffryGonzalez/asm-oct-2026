@@ -60,7 +60,10 @@ export const ProductsStore = signalStore(
     ),
     sortedProductList: computed(() => {
       const list = store.productsListResource.value() ?? [];
-      const opt = store.sortOption();
+      let opt = store.sortOption();
+      if (!!opt) {
+        opt = 'name' as SortOption;
+      }
       switch (opt) {
         case 'name':
           return list.toSorted((a, b) => a.name.localeCompare(b.name));
@@ -68,7 +71,8 @@ export const ProductsStore = signalStore(
           return list.toSorted((a, b) => (a.price === b.price ? 0 : a.price > b.price ? -1 : 1));
 
         default:
-          assertNever(opt);
+          return [];
+        //   assertNever(opt);
       }
     }),
   })),
