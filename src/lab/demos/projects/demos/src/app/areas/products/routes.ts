@@ -5,11 +5,14 @@ import { Details } from './pages/details';
 import { httpResource } from '@angular/common/http';
 import { ProductModel } from './types';
 import { Todos } from './pages/todos';
+import { ProductsStore } from './stores/products';
+import { inject } from '@angular/core';
 
 export const productsRoutes: Routes = [
   {
     path: '',
     component: Home,
+    providers: [ProductsStore],
     children: [
       {
         path: 'todos',
@@ -19,7 +22,8 @@ export const productsRoutes: Routes = [
         path: '', // shows the list
         component: Index,
         resources: () => {
-          return { list: nonBlocking(httpResource<ProductModel[]>(() => '/api/products')) };
+          const store = inject(ProductsStore);
+          return { list: nonBlocking(store.productsListResource) };
         },
         children: [
           {

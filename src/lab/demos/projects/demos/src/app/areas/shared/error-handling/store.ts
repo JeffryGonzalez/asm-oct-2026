@@ -53,13 +53,20 @@ export const ErrorStore = signalStore(
       const malformed = state._malformedEntities().map((m) => ({
         id: m.id,
         kind: 'malformed',
+        featureName: m.featureName,
         message:
           'Malformed Response  ' + m.message + m.featureName ? ' (' + m.featureName + ')' : '',
         url: m.url,
       }));
       const http = state
         ._httpEntities()
-        .map((m) => ({ id: m.id, message: m.status, url: m.url, kind: 'http' }));
+        .map((m) => ({
+          id: m.id,
+          message: m.status,
+          url: m.url,
+          kind: 'http',
+          featureName: m.featureName,
+        }));
       return [...malformed, ...http];
     }),
   })),

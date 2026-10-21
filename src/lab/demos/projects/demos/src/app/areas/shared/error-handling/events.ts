@@ -7,7 +7,7 @@ export type MalFormedDataPayload = {
   featureName?: string;
   url: string;
 };
-export type HttpResponseError = { url: string; status: number };
+export type HttpResponseError = { url: string; status: number; featureName?: string };
 
 export const httpErrorEvents = eventGroup({
   source: 'Application Http Errors',
