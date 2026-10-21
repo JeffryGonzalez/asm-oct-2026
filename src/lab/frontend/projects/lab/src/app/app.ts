@@ -10,6 +10,7 @@ import { MockPanel } from 'mock-control';
     <header class="navbar bg-base-200 px-4">
       <a routerLink="/" class="text-xl font-semibold mr-6">Library</a>
       <ul class="menu menu-horizontal">
+        <li><a routerLink="/prefs" routerLinkActive="menu-active">Your Preferences</a></li>
         <li><a routerLink="/titles/before" routerLinkActive="menu-active">Titles (before)</a></li>
         <li>
           <a routerLink="/holds/before/1001" routerLinkActive="menu-active"

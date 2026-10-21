@@ -7,7 +7,7 @@ import { Events, on, withEventHandlers, withReducer } from '@ngrx/signals/events
 import { mergeMap } from 'rxjs';
 import { httpErrorEvents, HttpResponseError, MalFormedDataPayload } from './events';
 import { LoggingApi } from './logging-api';
-import { http } from 'msw';
+import { withSplunkErrorLogging } from './send-to-logging-feature';
 type MalformedDataEntity = MalFormedDataPayload & { id: string };
 type HttpResponseEntity = HttpResponseError & { id: string };
 
@@ -15,6 +15,7 @@ export const ErrorStore = signalStore(
   withStellarDevtools('ErrorStore', {
     description: 'The Error handling store, with entities',
   }),
+  withSplunkErrorLogging(),
   withEntities({
     collection: '_malformed',
     entity: type<MalformedDataEntity>(),
@@ -58,35 +59,15 @@ export const ErrorStore = signalStore(
           'Malformed Response  ' + m.message + m.featureName ? ' (' + m.featureName + ')' : '',
         url: m.url,
       }));
-      const http = state
-        ._httpEntities()
-        .map((m) => ({
-          id: m.id,
-          message: m.status,
-          url: m.url,
-          kind: 'http',
-          featureName: m.featureName,
-        }));
+      const http = state._httpEntities().map((m) => ({
+        id: m.id,
+        message: m.status,
+        url: m.url,
+        kind: 'http',
+        featureName: m.featureName,
+      }));
       return [...malformed, ...http];
     }),
   })),
   // event handlers are like 'effects' in ngrx store
-  withEventHandlers((_, events = inject(Events), service = inject(LoggingApi)) => ({
-    sendMalformedDataToOtherApi$: events.on(httpErrorEvents.malformedData).pipe(
-      mergeMap((err) =>
-        service
-          .sendToLoggingEndPoint({ msg: err.payload.message, additional: err.payload.zodError })
-          .pipe(
-            tapResponse({
-              next(value) {
-                console.log(value.trackingId);
-              },
-              error(error) {
-                console.error('The error');
-              },
-            }),
-          ),
-      ),
-    ),
-  })),
 );

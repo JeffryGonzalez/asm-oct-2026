@@ -1,4 +1,4 @@
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, TitleCasePipe } from '@angular/common';
 import type { SortOption } from '../stores/products';
 import { Component, effect, inject, input } from '@angular/core';
 import { RouterLinkWithHref, RouterOutlet } from '@angular/router';
@@ -6,14 +6,18 @@ import { ProductsStore } from '../stores/products';
 
 @Component({
   selector: 'app-products-index',
-  imports: [CurrencyPipe, RouterOutlet, RouterLinkWithHref],
+  imports: [CurrencyPipe, RouterOutlet, RouterLinkWithHref, TitleCasePipe],
   template: `
     <p>Products Index Page</p>
     <div class="join">
-      @if (store.sortOption() === 'price') {
-        <a [routerLink]="['.', { sortOption: 'name' }]" class="join-item btn"> Sort by Name </a>
-      } @else {
-        <a [routerLink]="['.', { sortOption: 'price' }]" class="join-item btn"> Sort by Price </a>
+      @for (opt of store.sortColumns; track $index) {
+        <a
+          [aria-disabled]="store.sortOption() === opt"
+          [routerLink]="['.', { sortOption: opt }]"
+          class="join-item btn"
+        >
+          Sort by {{ opt | titlecase }}
+        </a>
       }
     </div>
     <div class="flex h-12">

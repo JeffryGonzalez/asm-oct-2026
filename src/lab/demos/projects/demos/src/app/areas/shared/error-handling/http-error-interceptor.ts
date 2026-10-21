@@ -8,10 +8,12 @@ import { httpErrorEvents } from './events';
 
 export function httpErrorInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) {
   const dispatcher = injectDispatch(httpErrorEvents);
-  console.log(`Got a request to ${req.url} and it is a ${req.method} method`);
+  // up here is our opportunity to "look at" the outgoing http request.
+  // a common thing is to do logging, otel, stuff, or
+  // clone the request, add headers, etc (Authorization) and send that cloned version.
   return next(req).pipe(
     catchError((r: HttpErrorResponse) => {
-      dispatcher.httpError({ url: r.url || '', status: r.status });
+      dispatcher.httpError({ url: r.url || 'unknown', status: r.status });
       throw r;
     }),
   );

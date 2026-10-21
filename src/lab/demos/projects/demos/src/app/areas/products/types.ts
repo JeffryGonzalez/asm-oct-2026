@@ -12,6 +12,7 @@ export type ProductModel = {
   id: string;
   name: string;
   price: number;
+  manufacturer?: string;
 };
 
 export type ProductDetailsModel = ProductModel & {
